@@ -1,12 +1,5 @@
 module Trellohub
   module Synchronal
-    SYNCHRONAL_KEYS = %i(
-      temporary_cards_by_issues
-      temporary_cards
-    )
-
-    attr_reader(*SYNCHRONAL_KEYS)
-
     def synchronize
     end
     alias_method :sync, :synchronize
@@ -23,26 +16,26 @@ module Trellohub
       end
     end
 
-    def issues_cards
-      @issue_cards ||= Trellohub.repos.each.with_object([]) do |repo, cards|
-        cards.concat issues_cards_on(repo)
+    def issues_forms
+      @issues_forms ||= Trellohub.repos.each.with_object([]) do |repo, forms|
+        forms.concat issues_forms_on(repo)
       end
     end
 
-    def issues_cards_on(repo)
-      issues(repo).each.with_object([]) do |issue, cards|
-        temp_card = Trellohub::Card.new
-        temp_card.import_from_issue repo, issue
-        cards << temp_card
+    def issues_forms_on(repo)
+      issues(repo).each.with_object([]) do |issue, forms|
+        form = Trellohub::Form.new
+        form.import_issue repo, issue
+        forms << form
       end
     end
 
-    def trello_cards
-      @trello_cards ||= Trellohub::Card.all.
-        each.with_object([]) do |card, cards|
-        temp_card = Trellohub::Card.new
-        temp_card.import card
-        cards << temp_card
+    def cards_forms
+      @cards_forms ||= Trellohub::Card.all.
+        each.with_object([]) do |card, forms|
+        form = Trellohub::Form.new
+        form.import_card card
+        forms << form
       end
     end
 

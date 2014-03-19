@@ -1,6 +1,5 @@
 require 'ostruct'
 require 'trellohub/board'
-require 'trellohub/lists'
 
 module Trellohub
   class List < OpenStruct
@@ -28,7 +27,17 @@ module Trellohub
     end
 
     class << self
-      include Lists
+      def all
+        @all || self.all!
+      end
+
+      def all!
+        @all = Trell.lists(Trellohub::Board.id)
+      end
+
+      def find_by(name: nil)
+        self.all.find { |list| list.name == name }
+      end
     end
   end
 end

@@ -1,13 +1,12 @@
 require 'octokit'
 require 'trell'
 require 'trellohub/version'
-require 'trellohub/configurable'
 require 'trellohub/board'
 require 'trellohub/list'
-require 'trellohub/lists'
 require 'trellohub/card'
-require 'trellohub/cards'
 require 'trellohub/member'
+require 'trellohub/form'
+require 'trellohub/configurable'
 require 'trellohub/synchronal'
 
 module Trellohub

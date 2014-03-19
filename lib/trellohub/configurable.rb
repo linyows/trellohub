@@ -3,20 +3,24 @@ require 'trellohub/core_ext/hash'
 
 module Trellohub
   module Configurable
-    CONFIGURATIONS_KEYS = %i(
-      config_file
-      board_id
-      repositories
-      milestones
-      lists
-      trello_application_key
-      trello_application_token
-      github_access_token
-      github_api_endpoint
-      github_web_endpoint
-    )
+    class << self
+      def keys
+        %i(
+          config_file
+          board_id
+          repositories
+          milestones
+          lists
+          trello_application_key
+          trello_application_token
+          github_access_token
+          github_api_endpoint
+          github_web_endpoint
+        )
+      end
+    end
 
-    attr_accessor(*CONFIGURATIONS_KEYS)
+    attr_accessor(*self.keys)
     alias_method :repos, :repositories
 
     def configure
@@ -117,12 +121,6 @@ module Trellohub
 
     def github_web_endpoint
       File.join(@github_web_endpoint, '')
-    end
-
-    class << self
-      def keys
-        @keys ||= CONFIGURATIONS_KEYS
-      end
     end
   end
 end
