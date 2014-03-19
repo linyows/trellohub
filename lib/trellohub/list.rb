@@ -35,8 +35,15 @@ module Trellohub
         @all = Trell.lists(Trellohub::Board.id)
       end
 
-      def find_by(name: nil)
-        self.all.find { |list| list.name == name }
+      def find_by(id: nil, name: nil)
+        case
+        when !id.nil?
+          self.all.find { |list| list.id == id }
+        when !name.nil?
+          self.all.find { |list| list.name == name }
+        else
+          nil
+        end
       end
     end
   end

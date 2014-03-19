@@ -9,7 +9,6 @@ module Trellohub
           config_file
           board_id
           repositories
-          milestones
           lists
           trello_application_key
           trello_application_token
@@ -21,18 +20,16 @@ module Trellohub
     end
 
     attr_accessor(*self.keys)
-    alias_method :repos, :repositories
 
     def configure
       yield self
     end
 
     def reset
+      @repositories             = []
+      @lists                    = []
       @config_file              = ENV['CONFIG_FILE']
       @board_id                 = ENV['BOARD_ID']
-      @repositories             = []
-      @milestones               = []
-      @lists                    = []
       @trello_application_key   = ENV['TRELLO_APPLICATION_KEY']
       @trello_application_token = ENV['TRELLO_APPLICATION_TOKEN']
       @github_access_token      = ENV['GITHUB_ACCESS_TOKEN']
@@ -47,8 +44,11 @@ module Trellohub
         symbolize_keys.
         slice(*Trellohub::Configurable.keys).
         each do |key, value|
-          if value.is_a?(Array)
-            value = value.map { |v| v.is_a?(Hash) ? Trellohub::List.new(v) : v }
+          case key
+          when :repositories
+            value = value.map { |v| Trellohub::Repository.new(v) }
+          when :lists
+            value = value.map { |v| Trellohub::List.new(v) }
           end
           instance_variable_set(:"@#{key}", value)
       end
@@ -113,6 +113,23 @@ module Trellohub
 
     def issue_labels
       @lists.map(&:issue_label).compact
+    end
+
+    def repository_by(full_name: nil, milestone: nil)
+      case
+      when full_name
+        @repositories.find { |repo| repo.full_name == full_name }
+      when milestone
+        @repositories.find { |repo| repo.milestone == milestone }
+      end
+    end
+
+    def repository_full_names
+      @repositories.map(&:full_names).compact
+    end
+
+    def repository_milestones
+      @repositories.map(&:milestone).uniq
     end
 
     def github_api_endpoint

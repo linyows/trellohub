@@ -21,63 +21,66 @@ module Trellohub
           )
         end
 
+        def attributes
+          self.valid_attributes.map do |key|
+            :"issue_#{key}"
+          end
+        end
+
         def included(base)
           base.class_eval do
-            attr_accessor(*Trellohub::Form::Issue.valid_attributes)
+            attr_accessor(*Trellohub::Form::Issue.attributes)
           end
         end
       end
 
       def import_issue(repository, issue)
-        @idBoard = Trellohub::Board.id
-        @repository = repository
-        @issue = issue.dup
-        @issue_id = issue.id
+        @origin_issue = issue.dup
+        @issue_repository = repository
+        @key = "#{issue_repo_name}##{@origin_issue.number}"
 
-        build_key
-        build_name
-        build_desc
-        build_milestone
-
-        assign_members
-        assign_list
+        build_card_attributes_by_issue
+        build_issue_attributes_by_issue
       end
 
-      def repository_name
-        repo.split('/').last
+      def build_card_attributes_by_issue
+        @card_idBoard = Trellohub::Board.id
+        @card_name = "#{issue_repo_name}##{@origin_issue.number} #{@origin_issue.title}"
+        @card_desc = <<-DESC.gsub(/^\s+/, '')
+          issue: #{@issue_repository}##{@origin_issue.number}
+          link: #{Octokit.web_endpoint}#{@issue_repository}/issues/#{@origin_issue.number}
+        DESC
+        assign_card_members_by_issue
+        assign_card_list_by_issue
       end
 
-      def build_key
-        @key = "#{repository_name}##{@issue.number}"
-      end
-
-      def build_name
-        @name = "#{repository_name}##{@issue.number} #{@issue.title}"
-      end
-
-      def build_desc
-        @desc = "#{Octokit.web_endpoint}#{repo}/issues/#{@issue.number}"
-      end
-
-      def build_milestone
-        return unless @issue.milestone
-        @milestone = @issue.milestone.title
-      end
-
-      def assign_members
-        return unless @issue.assignee
-
-        member = Trellohub::Member.find_by_github_user(@issue.assignee.login)
-        unless member.nil?
-          @idMembers = [member.id]
+      def build_issue_attributes_by_issue
+        @issue_id = @origin_issue.id
+        @issue_number = @origin_issue.number
+        if @origin_issue.milestone
+          @issue_milestone = @origin_issue.milestone.title
         end
       end
 
-      def assign_list
-        labels = @issue.labels.map(&:name).uniq
+      def issue_repository_name
+        @issue_repository.split('/').last
+      end
+      alias_method :issue_repo_name, :issue_repository_name
+
+      def assign_card_members_by_issue
+        return unless @origin_issue.assignee
+
+        member = Trellohub::Member.find_by(username: @origin_issue.assignee.login)
+        unless member.nil?
+          @card_idMembers = [member.id]
+        end
+      end
+
+      def assign_card_list_by_issue
+        labels = @origin_issue.labels.map(&:name).uniq
         list = Trellohub.list_by(labels: labels)
         return unless list
-        @idList = list.id
+        @card_idList = list.id
       end
 
       def save_as_issue
@@ -85,7 +88,7 @@ module Trellohub
 
       def to_issue
         Hash[Trellohub::Form::Issue.valid_attributes.map { |key|
-          [key, instance_variable_get(:"@#{key == :id ? :issue_id : key}")]
+          [key, instance_variable_get(:"@issue_#{key}")]
         }]
       end
     end

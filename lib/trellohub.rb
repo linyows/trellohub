@@ -1,6 +1,7 @@
 require 'octokit'
 require 'trell'
 require 'trellohub/version'
+require 'trellohub/repository'
 require 'trellohub/board'
 require 'trellohub/list'
 require 'trellohub/card'
