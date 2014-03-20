@@ -46,19 +46,35 @@ module Trellohub
       def build_card_attributes_by_issue
         @card_idBoard = Trellohub::Board.id
         @card_name = "#{issue_repo_name}##{@origin_issue.number} #{@origin_issue.title}"
-        @card_desc = <<-DESC.gsub(/^\s+/, '')
-          issue: #{@issue_repository}##{@origin_issue.number}
-          link: #{Octokit.web_endpoint}#{@issue_repository}/issues/#{@origin_issue.number}
-        DESC
+        @card_desc = "synced_issue: #{Octokit.web_endpoint}#{@issue_repository}/issues/#{@origin_issue.number}"
         assign_card_members_by_issue
         assign_card_list_by_issue
       end
 
       def build_issue_attributes_by_issue
+        @origin_issue.attrs.keys.each do |key|
+          next if key == :pull_request
+          value = case key
+            when :user
+              @origin_issue.user.login
+            when :labels
+              if @origin_issue.labels.empty?
+                @origin_issue.labels
+              else
+                @origin_issue.labels.map(&:name)
+              end
+            else
+              @origin_issue.send(key)
+            end
+          instance_variable_set(:"@issue_#{key}", value)
+        end
+
         @issue_id = @origin_issue.id
         @issue_number = @origin_issue.number
+
         if @origin_issue.milestone
-          @issue_milestone = @origin_issue.milestone.title
+          @issue_milestone_title = @origin_issue.milestone.title
+          @issue_milestone = @origin_issue.milestone.number
         end
       end
 
@@ -81,6 +97,7 @@ module Trellohub
         list = Trellohub.list_by(labels: labels)
         return unless list
         @card_idList = list.id
+        @card_list_name = list.name
       end
 
       def save_as_issue

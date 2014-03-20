@@ -27,6 +27,19 @@ module Trellohub
           end
         end
 
+        # e.g.
+        # => #<MatchData
+        # "synced_issue: https://github.com/linyows-Z_2/trellohub-foo_aaa-123/issues/127"
+        # 1:"linyows-Z_2/trellohub-foo_aaa-123"
+        # 2:"127">
+        def key_matcher
+          /synced_issue:\shttps?:\/\/.*?\/([\w\-\/]+)\/(?:issues|pulls)\/(\d+)/
+        end
+
+        def card_name_prefix_matcher
+          /^[\w\-]+#\d+\s/
+        end
+
         def included(base)
           base.class_eval do
             attr_accessor(*Trellohub::Form::Card.attributes)
@@ -45,16 +58,21 @@ module Trellohub
       end
 
       def build_issue_attributes_by_card
-        if @origin_card.desc =~ /issue:\s(([\w\-\/]+)#(\d+))\s/
+        @issue_title = @origin_card.name.gsub(self.class.card_name_prefix_matcher, '')
+
+        if @origin_card.desc =~ self.class.key_matcher
           @issue_repository = $1
-          @issue_number = $3
+          @issue_number = $2
+
+          repo = Trellohub.repository_by(full_name: @issue_repository)
+          @issue_milestone = repo.milestone.title if repo.milestone?
         end
-        @issue_title = @origin_card.name.gsub(/^[\w\-]+#\d+\s/, '')
+
         unless @origin_card.idMembers.empty?
           @issue_assignee = Trellohub::Member.find_by(id: @origin_card.idMembers.first)
         end
+
         @issue_labels = Trellohub::List.find_by(id: @origin_card.idList)
-        #@issue_milestone =
       end
 
       def save_as_card

@@ -4,6 +4,18 @@ module Trellohub
     end
     alias_method :sync, :synchronize
 
+    def different_issues_forms
+      issues_forms.each do |form|
+      end
+    end
+    alias_method :diff_issues, :different_issues_forms
+
+    def different_cards_forms
+      cards_forms.each do |form|
+      end
+    end
+    alias_method :diff_issues, :different_issues_forms
+
     def issues_forms
       @issues_forms ||= Trellohub.repositories.each.with_object([]) do |repo, forms|
         forms.concat issues_forms_on(repo)

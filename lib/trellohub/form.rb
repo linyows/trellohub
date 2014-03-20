@@ -7,26 +7,30 @@ module Trellohub
     include Form::Issue
 
     class << self
-      def other_attributes
+      def common_attributes
         %i(
           key
-          repository
-          list_name
-          issue
+        )
+      end
+
+      def origin_attributes
+        %i(
+          origin_issue
+          origin_card
         )
       end
     end
 
-    attr_accessor(*self.other_attributes)
-    alias_method :repo, :repository
+    attr_accessor(*self.common_attributes + self.origin_attributes)
 
     def to_hash
       Hash[instance_variables.map { |variable|
-        [
-          :"#{variable.to_s.gsub('@', '')}",
-          instance_variable_get(:"#{variable}")
-        ]
-      }]
+        variable_no_at = variable.to_s.gsub('@', '')
+
+        next if self.class.origin_attributes.include?(:"#{variable_no_at}")
+
+        [variable_no_at.to_sym, instance_variable_get(:"#{variable}")]
+      }.compact]
     end
   end
 end
