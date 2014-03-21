@@ -4,20 +4,11 @@ module Trellohub
       class << self
         def valid_attributes
           %i(
-            id
             number
             title
-            user
             labels
             state
             assignee
-            milestone
-            comments
-            created_at
-            updated_at
-            closed_at
-            pull_request
-            body
           )
         end
 
@@ -47,6 +38,7 @@ module Trellohub
         @card_idBoard = Trellohub::Board.id
         @card_name = "#{issue_repo_name}##{@origin_issue.number} #{@origin_issue.title}"
         @card_desc = "synced_issue: #{Octokit.web_endpoint}#{@issue_repository}/issues/#{@origin_issue.number}"
+        @card_closed = @origin_issue.state == 'closed'
         assign_card_members_by_issue
         assign_card_list_by_issue
       end
@@ -54,9 +46,12 @@ module Trellohub
       def build_issue_attributes_by_issue
         @origin_issue.attrs.keys.each do |key|
           next if key == :pull_request
+
           value = case key
             when :user
               @origin_issue.user.login
+            when :assignee
+              @origin_issue.assignee ? @origin_issue.assignee.login : nil
             when :labels
               if @origin_issue.labels.empty?
                 @origin_issue.labels
@@ -66,6 +61,7 @@ module Trellohub
             else
               @origin_issue.send(key)
             end
+
           instance_variable_set(:"@issue_#{key}", value)
         end
 
