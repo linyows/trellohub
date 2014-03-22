@@ -80,6 +80,25 @@ module Trellohub
         Trell.send(:"#{card_update? ? :update : :create}_card", *to_card)
       end
 
+      %i(create update delete).each do |cud|
+        class_eval <<-METHODS, __FILE__, __LINE__ + 1
+          def card_#{cud}d_at
+            card_#{cud}_action.date if card_#{cud}_action
+          end
+
+          def card_#{cud}_user
+            if card_#{cud}_action && card_#{cud}_action.memberCreator
+              card_#{cud}_action.memberCreator.username
+            end
+          end
+
+          def card_#{cud}_action
+            @card_#{cud}_action ||= Trell.card_actions(@card_id, filter: '#{cud}Card').
+              sort_by(&:date).last
+          end
+        METHODS
+      end
+
       def to_card
         Hash[Trellohub::Form::Card.valid_attributes.map { |key|
           [key, instance_variable_get(:"@card_#{key}")]
