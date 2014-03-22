@@ -101,6 +101,7 @@ module Trellohub
       end
 
       def save_as_issue
+        Octokit.send(:"#{issue_update? ? :update : :create}_issue", *to_issue)
       end
 
       def to_issue

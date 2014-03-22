@@ -77,6 +77,7 @@ module Trellohub
       end
 
       def save_as_card
+        Trell.send(:"#{card_update? ? :update : :create}_card", *to_card)
       end
 
       def to_card
