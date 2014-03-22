@@ -31,7 +31,7 @@ module Trellohub
         @origin_card = card.dup
 
         card.attrs.keys.each do |key|
-          next if key == :card_badges
+          next if key == :badges
           instance_variable_set(:"@card_#{key}", card.send(key))
         end
 
