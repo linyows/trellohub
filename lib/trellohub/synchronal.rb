@@ -38,12 +38,5 @@ module Trellohub
         forms << form
       end
     end
-
-    # def import_from_github_issues
-      # issued_cards(repo, 'open').each do |card|
-        # Trell.create_card card.slice(*valid_card_attributes)
-      # end
-    # end
-    # alias_method :import, :import_from_github_issues
   end
 end
