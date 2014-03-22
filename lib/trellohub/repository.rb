@@ -7,9 +7,9 @@ module Trellohub
         when milestone.is_a?(String)
           []
         when milestone.nil?
-          Octokit.issues(full_name)
+          Octokit.issues(full_name, state: 'all')
         else
-          Octokit.issues(full_name, milestone: milestone.number)
+          Octokit.issues(full_name, milestone: milestone.number, state: 'all')
         end
     rescue Octokit::NotFound
       []
