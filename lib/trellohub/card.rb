@@ -8,7 +8,7 @@ module Trellohub
       end
 
       def all!
-        @all = Trell.cards(Trellohub::Board.id)
+        @all = Trell.cards(Trellohub::Board.id, filter: 'all')
       end
 
       def all_clear
