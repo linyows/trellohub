@@ -96,6 +96,10 @@ module Trellohub
         @card_list_name = list.name
       end
 
+      def issue_update?
+        !@issue_id.nil?
+      end
+
       def save_as_issue
       end
 

@@ -72,6 +72,10 @@ module Trellohub
         @issue_labels = list.name if list
       end
 
+      def card_update?
+        !@card_id.nil?
+      end
+
       def save_as_card
       end
 
