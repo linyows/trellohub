@@ -1,6 +1,14 @@
 class Hash
   def slice(*keys)
-    keys.each_with_object(self.class.new) { |k, hash| hash[k] = self[k] if has_key?(k) }
+    keys.each_with_object(self.class.new) { |k, hash|
+      hash[k] = self[k] if has_key?(k)
+    }
+  end
+
+  def extract(*keys)
+    self.each_with_object(self.class.new) { |(k, v), hash|
+      hash[k] = v unless keys.include?(k)
+    }
   end
 
   def symbolize_keys
