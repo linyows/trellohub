@@ -13,6 +13,16 @@ module Trellohub
         end
     rescue Octokit::NotFound
       []
+    # The "state: all" option was not supported by GitHub Enterprise API
+    rescue Octokit::UnprocessableEntity
+      @issues ||= case
+        when milestone.nil?
+          Octokit.issues(full_name, state: 'open') +
+          Octokit.issues(full_name, state: 'closed')
+        else
+          Octokit.issues(full_name, milestone: milestone.number, state: 'open') +
+          Octokit.issues(full_name, milestone: milestone.number, state: 'closed')
+        end
     end
 
     def milestone
