@@ -46,18 +46,40 @@ $ cp boards/example.yml boards/your_board_name.yml
 edit `boards/your_board_name.yml`:
 
 ```yml
+board_id: 531c1a3524127e**********
+repositories:
+  - full_name: organization/project_one
+    milestone: Stable Version
+  - full_name: organization/project_two
+    milestone: Ver2
+  - full_name: organization/project_three
+    milestone: New Feature
+lists:
+  - name: Backlog
+    default: true
+  - name: To Do
+    issue_label: to do
+  - name: Doing
+    issue_label: doing
+  - name: Done
+    issue_label: done
+  - name: Recent Closed
+    issue_closed_at: '>= Time.now.utc -60*60*24*7'
+trello_application_key: 429452e37b7e********************
+trello_application_token: dc71944d87340616f03a7647****************************************
+github_access_token: e17e1c6caa******************************
 ```
 
 Synchronizing
 -------------
 
-GitHub Issues     | Trello Cards   | Description
--------------     | ------------   | -----------
-status changes    | status changes | open, closed : create, delete
-milestone changes | status changes | when setted milestones
-labels change     | list changes   | label: todo => list: To Do
-title changes     | title changes  | card title: 'repo_name#issue_number title'
-asignee changes   | member changes | first member is issue assignee
+GitHub Issues                | Trello Cards               | Description
+-------------                | ------------               | -----------
+Status(open, closed) changes | Closed(true false) changes | All created by a token user When trellohub creates the issue.
+Milestone changes            | Status changes             | If setted milestones
+Labels change                | List changes               | e.g. The "todo" label => The "To Do" list
+Title changes                | Title changes              | Card title format is 'repo_name#issue_number title'
+Asignee changes              | Member changes             | First member is issue assignee.
 
 Contributing
 ------------
