@@ -1,41 +1,38 @@
 module Trellohub
   module Synchronal
     def synchronize
+      synchronize_to_cards_from_issues
+      synchronize_to_issues_from_cards
     end
     alias_method :sync, :synchronize
 
-    def different_issues_forms
-      issues_forms.each do |form|
-      end
-    end
-    alias_method :diff_issues, :different_issues_forms
+    def synchronize_to_cards_from_issues
+      Form.with_issues.each do |issue_form|
+        card_form = Form.with_cards.find_by_key(issue_form.key)
 
-    def different_cards_forms
-      cards_forms.each do |form|
-      end
-    end
-    alias_method :diff_issues, :different_issues_forms
-
-    def issues_forms
-      @issues_forms ||= Trellohub.repositories.each.with_object([]) do |repo, forms|
-        forms.concat issues_forms_on(repo)
+        case
+        when card_form.nil?
+          issue_form.save_as_card
+        when Form.compare(issue_form, card_form)
+          card_form.save_as_issue
+        when Form.compare(card_form, issue_form)
+          issue_form.save_as_card
+        end
       end
     end
 
-    def issues_forms_on(repo)
-      repo.issues.each.with_object([]) do |issue, forms|
-        form = Trellohub::Form.new
-        form.import_issue repo.full_name, issue
-        forms << form
-      end
-    end
+    def synchronize_to_issues_from_cards
+      Form.with_cards.each do |card_form|
+        issue_form = Form.with_issues.find_by_key(card_form.key)
 
-    def cards_forms
-      @cards_forms ||= Trellohub::Card.all.
-        each.with_object([]) do |card, forms|
-        form = Trellohub::Form.new
-        form.import_card card
-        forms << form
+        case
+        when issue_form.nil?
+          card_form.save_as_issue
+        when Form.compare(card_form, issue_form)
+          issue_form.save_as_card
+        when Form.compare(issue_form, card_form)
+          card_form.save_as_issue
+        end
       end
     end
   end
