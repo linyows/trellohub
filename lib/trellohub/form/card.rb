@@ -29,6 +29,7 @@ module Trellohub
 
       def import_card(card)
         @origin_card = card.dup
+        @imported_from = :card
 
         card.attrs.keys.each do |key|
           next if key == :badges
@@ -53,7 +54,7 @@ module Trellohub
 
       def build_issue_attributes_by_card
         @issue_title = @origin_card.name.gsub(card_name_prefix_matcher, '')
-        @issue_state = @origin_card.closed ? 'closed' : 'open'
+        @issue_state = @state = @origin_card.closed ? 'closed' : 'open'
 
         if @origin_card.desc =~ key_matcher
           @issue_repository = $1

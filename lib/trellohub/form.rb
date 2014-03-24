@@ -10,6 +10,8 @@ module Trellohub
       def common_attributes
         %i(
           key
+          state
+          imported_from
         )
       end
 

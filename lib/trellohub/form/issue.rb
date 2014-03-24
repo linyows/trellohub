@@ -29,6 +29,8 @@ module Trellohub
         @origin_issue = issue.dup
         @issue_repository = repository
         @key = "#{issue_repo_name}##{@origin_issue.number}"
+        @state = @origin_issue.state
+        @imported_from = :issue
 
         build_card_attributes_by_issue
         build_issue_attributes_by_issue
