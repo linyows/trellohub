@@ -103,7 +103,14 @@ module Trellohub
       end
 
       def save_as_issue
-        Octokit.send(:"#{issue_update? ? :update : :create}_issue", *to_issue)
+        case
+        when issue_update?
+          Octokit.update_issue(@issue_id, *to_issue_extract(:id))
+        when closed?
+          Octokit.close_issue(@issue_id, *to_issue_extract(:id))
+        when open?
+          Octokit.create_issue(*to_issue_extract(:id))
+        end
       end
 
       def to_issue

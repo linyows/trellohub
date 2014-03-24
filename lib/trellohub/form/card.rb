@@ -79,7 +79,14 @@ module Trellohub
       end
 
       def save_as_card
-        Trell.send(:"#{card_update? ? :update : :create}_card", *to_card)
+        case
+        when card_update?
+          Trell.update_card(@card_id, *to_card_extract(:id))
+        when closed?
+          Trell.update_card(@card_id, *to_card_extract(:id).merge(closed: true))
+        when open?
+          Trell.create_card(*to_card_extract(:id))
+        end
       end
 
       %i(create update delete).each do |cud|
