@@ -59,6 +59,7 @@ module Trellohub
         if @origin_card.desc =~ key_matcher
           @issue_repository = $1
           @issue_number = $2
+          @key = "#{@issue_repository}##{@issue_repository.number}"
 
           repo = Trellohub.repository_by(full_name: @issue_repository)
           @issue_milestone = repo.milestone.title if repo.milestone?
