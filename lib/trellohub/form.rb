@@ -25,6 +25,14 @@ module Trellohub
 
     attr_accessor(*self.common_attributes + self.origin_attributes)
 
+    def open?
+      @state == 'open'
+    end
+
+    def closed?
+      @state == 'closed'
+    end
+
     def to_hash
       Hash[instance_variables.map { |variable|
         variable_no_at = variable.to_s.gsub('@', '')
