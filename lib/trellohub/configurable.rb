@@ -10,6 +10,7 @@ module Trellohub
           board_id
           repositories
           lists
+          options
           trello_application_key
           trello_application_token
           github_access_token
@@ -28,6 +29,7 @@ module Trellohub
     def reset
       @repositories             = []
       @lists                    = []
+      @options                  = { default_assignee: true, default_member: true }
       @config_file              = ENV['CONFIG_FILE']
       @board_id                 = ENV['BOARD_ID']
       @trello_application_key   = ENV['TRELLO_APPLICATION_KEY']
