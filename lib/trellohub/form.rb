@@ -78,6 +78,18 @@ module Trellohub
 
     attr_accessor(*self.common_attributes + self.origin_attributes)
 
+    def created_at
+      @created_at ||= send(:"#{@imported_from}_#{__method__}")
+    end
+
+    def updated_at
+      return @issue_updated_at if @imported_from == :issue
+      @updated_at ||= card_updated_at || card_created_at
+    end
+
+    def closed_at
+    end
+
     def open?
       @state == 'open'
     end
