@@ -113,14 +113,38 @@ module Trellohub
         !@issue_id.nil?
       end
 
+      def create_issue
+        Octokit.create_issue(
+          @issue_repository,
+          @issue_title,
+          nil,
+          to_issue.extract(:number, :title)
+        )
+      end
+
+      def update_issue
+        Octokit.update_issue(
+          @issue_repository,
+          @issue_number,
+          @issue_title,
+          nil,
+          to_issue.extract(:number, :title)
+        )
+      end
+
+      def close_issue
+        Octokit.close_issue(
+          @issue_repository,
+          @issue_number,
+          to_issue.extract(:number)
+        )
+      end
+
       def save_as_issue
         case
-        when issue_update?
-          Octokit.update_issue(@issue_id, *to_issue_extract(:id))
-        when closed?
-          Octokit.close_issue(@issue_id, *to_issue_extract(:id))
-        when open?
-          Octokit.create_issue(*to_issue_extract(:id))
+        when issue_update? && open? then update_issue
+        when issue_update? && closed? then close_issue
+        when open? then create_issue
         end
       end
 

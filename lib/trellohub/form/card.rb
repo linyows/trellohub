@@ -83,21 +83,6 @@ module Trellohub
         @issue_labels = list.name if list
       end
 
-      def card_update?
-        !@card_id.nil?
-      end
-
-      def save_as_card
-        case
-        when card_update?
-          Trell.update_card(@card_id, *to_card_extract(:id))
-        when closed?
-          Trell.update_card(@card_id, *to_card_extract(:id).merge(closed: true))
-        when open?
-          Trell.create_card(*to_card_extract(:id))
-        end
-      end
-
       %i(create update delete).each do |cud|
         class_eval <<-METHODS, __FILE__, __LINE__ + 1
           def card_#{cud}d_at
@@ -115,6 +100,30 @@ module Trellohub
               sort_by(&:date).last
           end
         METHODS
+      end
+
+      def card_update?
+        !@card_id.nil?
+      end
+
+      def create_card
+        Trell.create_card(to_card)
+      end
+
+      def update_card
+        Trell.update_card(@card_id, to_card)
+      end
+
+      def close_card
+        Trell.update_card(@card_id, to_card.merge(closed: true))
+      end
+
+      def save_as_card
+        case
+        when card_update? && open? then update_card
+        when card_update? && closed? then close_card
+        when open? then create_card
+        end
       end
 
       def to_card
