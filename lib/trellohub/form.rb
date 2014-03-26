@@ -64,6 +64,16 @@ module Trellohub
         array.instance_eval array_ext
         array
       end
+
+      def compare(base, target)
+        if base.updated_at < target.updated_at
+          diff = target.to_hash.each.with_object({}) do |(k, v), hash|
+            t = target.imported_from
+            hash[k] = v unless target.send(:"to_#{t}")[k] == base.send(:"to_#{t}")[k]
+          end
+          diff unless diff.empty?
+        end
+      end
     end
 
     attr_accessor(*self.common_attributes + self.origin_attributes)
