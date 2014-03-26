@@ -4,7 +4,6 @@ module Trellohub
       class << self
         def valid_attributes
           %i(
-            number
             title
             labels
             state
@@ -18,9 +17,21 @@ module Trellohub
           end
         end
 
+        def accessible_attributes
+          %i(
+            number
+            created_at
+            updated_at
+            closed_at
+          ).map do |key|
+            :"issue_#{key}"
+          end
+        end
+
         def included(base)
           base.class_eval do
             attr_accessor(*Trellohub::Form::Issue.attributes)
+            attr_reader(*Trellohub::Form::Issue.accessible_attributes)
           end
         end
       end

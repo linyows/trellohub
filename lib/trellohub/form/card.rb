@@ -20,9 +20,18 @@ module Trellohub
           end
         end
 
+        def accessible_attributes
+          %i(
+            id
+          ).map do |key|
+            :"card_#{key}"
+          end
+        end
+
         def included(base)
           base.class_eval do
             attr_accessor(*Trellohub::Form::Card.attributes)
+            attr_reader(*Trellohub::Form::Card.accessible_attributes)
           end
         end
       end
