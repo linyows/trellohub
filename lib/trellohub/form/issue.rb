@@ -28,7 +28,7 @@ module Trellohub
       def import_issue(repository, issue)
         @origin_issue = issue.dup
         @issue_repository = repository
-        @key = "#{issue_repo_name}##{@origin_issue.number}"
+        @key = "#{repository}##{@origin_issue.number}"
         @state = @origin_issue.state
         @imported_from = :issue
 
