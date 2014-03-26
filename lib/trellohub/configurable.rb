@@ -1,5 +1,6 @@
 require 'yaml'
 require 'trellohub/core_ext/hash'
+require 'trellohub/mocking'
 
 module Trellohub
   module Configurable
@@ -16,6 +17,7 @@ module Trellohub
           github_access_token
           github_api_endpoint
           github_web_endpoint
+          dry_run
         )
       end
     end
@@ -26,17 +28,14 @@ module Trellohub
       yield self
     end
 
-    def reset
+    def default!
+      @config_file              = ENV['CONFIG_FILE']
       @repositories             = []
       @lists                    = []
       @options                  = { default_assignee: true, default_member: true }
-      @config_file              = ENV['CONFIG_FILE']
-      @board_id                 = ENV['BOARD_ID']
-      @trello_application_key   = ENV['TRELLO_APPLICATION_KEY']
-      @trello_application_token = ENV['TRELLO_APPLICATION_TOKEN']
-      @github_access_token      = ENV['GITHUB_ACCESS_TOKEN']
       @github_api_endpoint      = Octokit.api_endpoint
       @github_web_endpoint      = Octokit.web_endpoint
+      @dry_run                  = false
     end
 
     def load!(config_file = nil)
@@ -56,27 +55,37 @@ module Trellohub
       end
     end
 
-    def init_trell
+    def override!
+      @board_id                 = ENV['BOARD_ID'] if ENV['BOARD_ID']
+      @trello_application_key   = ENV['TRELLO_APPLICATION_KEY'] if ENV['TRELLO_APPLICATION_KEY']
+      @trello_application_token = ENV['TRELLO_APPLICATION_TOKEN'] if ENV['TRELLO_APPLICATION_TOKEN']
+      @github_access_token      = ENV['GITHUB_ACCESS_TOKEN'] if ENV['GITHUB_ACCESS_TOKEN']
+      @github_api_endpoint      = ENV['GITHUB_API_ENDPOINT'] if ENV['GITHUB_API_ENDPOINT']
+      @github_web_endpoint      = ENV['GITHUB_WEB_ENDPOINT'] if ENV['GITHUB_WEB_ENDPOINT']
+      @dry_run                  = !!ENV['DRY_RUN'] if ENV['DRY_RUN']
+    end
+
+    def init!
       Trell.configure do |c|
         c.application_key = @trello_application_key
         c.application_token = @trello_application_token
       end
-    end
 
-    def init_octokit
       Octokit.configure do |c|
         c.access_token = @github_access_token
         c.api_endpoint = @github_api_endpoint
         c.web_endpoint = @github_web_endpoint
         c.auto_paginate = true
       end
+
+      self.dry_run = true if @dry_run
     end
 
     def setup(config_file = nil)
-      reset
+      default!
       load!(config_file)
-      init_trell
-      init_octokit
+      override!
+      init!
       self
     end
 
@@ -140,6 +149,11 @@ module Trellohub
 
     def github_web_endpoint
       File.join(@github_web_endpoint, '')
+    end
+
+    def dry_run=(bool)
+      @dry_run = bool
+      Mocking.send(@dry_run ? :start : :stop)
     end
   end
 end
