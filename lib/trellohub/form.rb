@@ -1,12 +1,10 @@
 require 'trellohub/form/card'
 require 'trellohub/form/issue'
-require 'trellohub/form/diff'
 
 module Trellohub
   class Form
     include Form::Card
     include Form::Issue
-    include Form::Diff
 
     class << self
       def common_attributes
