@@ -88,6 +88,8 @@ module Trellohub
     end
 
     def closed_at
+      return @issue_closed_at if @imported_from == :issue
+      @closed_at ||= card_closed_at || card_created_at
     end
 
     def open?
