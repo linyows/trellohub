@@ -5,3 +5,4 @@ gemspec
 
 gem 'pry'
 gem 'awesome_print', require: 'ap'
+gem 'rainbow'
