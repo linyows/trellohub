@@ -66,13 +66,38 @@ module Trellohub
       end
 
       def compare(base, target)
-        if base.updated_at < target.updated_at
-          diff = target.to_hash.each.with_object({}) do |(k, v), hash|
-            t = target.imported_from
-            hash[k] = v unless target.send(:"to_#{t}")[k] == base.send(:"to_#{t}")[k]
-          end
-          diff unless diff.empty?
+        return unless base.updated_at < target.updated_at
+        type = target.imported_from
+
+        printings = [[
+          "#{type} attr",
+          "#{'base'.yellow} (#{base.imported_from})",
+          "#{'comparison'.green} (#{type})"
+        ]] if Trellohub.debug
+
+        diff = target.send(:"to_valid_#{type}").each.with_object({}) do |(key, value), hash|
+          base_value = base.send(:"to_valid_#{type}")[key]
+          hash[key] = value unless value == base_value
+
+          printings << [
+            key,
+            base_value.to_s.yellow,
+            value.to_s.color(value == base_value ? :green : :red)
+          ] if Trellohub.debug
         end
+
+        if Trellohub.debug
+          max = printings.max_lengths
+          printings.each.with_index(1) do |line, index|
+            if index == 2
+              puts 3.times.map.with_index { |i| ''.ljust(max[i], '-') }.join(' | ')
+            else
+              puts line.map.with_index { |word, i| "#{word}".ljust(max[i]) }.join(' | ')
+            end
+          end
+        end
+
+        diff unless diff.empty?
       end
     end
 
