@@ -11,27 +11,25 @@ module Trellohub
           )
         end
 
-        def attributes
-          self.valid_attributes.map do |key|
-            :"issue_#{key}"
-          end
+        def accessible_attributes
+          (self.valid_attributes + %i(
+            body
+           )).map { |key| :"issue_#{key}" }
         end
 
-        def accessible_attributes
+        def readable_attributes
           %i(
             number
             created_at
             updated_at
             closed_at
-          ).map do |key|
-            :"issue_#{key}"
-          end
+          ).map { |key| :"issue_#{key}" }
         end
 
         def included(base)
           base.class_eval do
-            attr_accessor(*Trellohub::Form::Issue.attributes)
-            attr_reader(*Trellohub::Form::Issue.accessible_attributes)
+            attr_accessor(*Trellohub::Form::Issue.accessible_attributes)
+            attr_reader(*Trellohub::Form::Issue.readable_attributes)
           end
         end
       end

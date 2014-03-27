@@ -14,24 +14,23 @@ module Trellohub
           )
         end
 
-        def attributes
-          self.valid_attributes.map do |key|
-            :"card_#{key}"
-          end
+        def accessible_attributes
+          (self.valid_attributes + %i(
+            list_name
+          )).map { |key| :"card_#{key}" }
         end
 
-        def accessible_attributes
+        def readable_attributes
           %i(
             id
-          ).map do |key|
-            :"card_#{key}"
-          end
+            labels
+          ).map { |key| :"card_#{key}" }
         end
 
         def included(base)
           base.class_eval do
-            attr_accessor(*Trellohub::Form::Card.attributes)
-            attr_reader(*Trellohub::Form::Card.accessible_attributes)
+            attr_accessor(*Trellohub::Form::Card.accessible_attributes)
+            attr_reader(*Trellohub::Form::Card.readable_attributes)
           end
         end
       end
