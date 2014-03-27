@@ -1,7 +1,3 @@
-require 'yaml'
-require 'trellohub/core_ext/hash'
-require 'trellohub/mocking'
-
 module Trellohub
   module Configurable
     class << self
