@@ -10,7 +10,6 @@ module Trellohub
             idList
             name
             idMembers
-            labels
           )
         end
 
