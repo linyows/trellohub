@@ -43,6 +43,7 @@ module Trellohub
           instance_variable_set(:"@card_#{key}", card.send(key))
         end
 
+        build_card_attributes_by_card
         build_issue_attributes_by_card
       end
 
@@ -57,6 +58,11 @@ module Trellohub
 
       def card_name_prefix_matcher
         /^[\w\-]+#\d+\s/
+      end
+
+      def build_card_attributes_by_card
+        list = Trellohub::List.find_by(id: @origin_card.idList)
+        @card_list_name = list.name if list
       end
 
       def build_issue_attributes_by_card
