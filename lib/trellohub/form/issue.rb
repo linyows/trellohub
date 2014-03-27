@@ -111,30 +111,45 @@ module Trellohub
         !@issue_id.nil?
       end
 
+      def issue_body
+        if @issue_body.nil? && @imported_from == :card
+          form = Trellohub::Form.with_issues.find_by_key(@key)
+          @issue_body = form.issue_body if form
+        end
+
+        @issue_body
+      end
+
       def create_issue
+        return if @issue_repository.nil? || @issue_title.nil?
+
         Octokit.create_issue(
           @issue_repository,
           @issue_title,
           nil,
-          to_issue.extract(:number, :title)
+          to_valid_issue
         )
       end
 
       def update_issue
+        return if @issue_repository.nil? || @issue_number.nil? || @issue_title.nil?
+
         Octokit.update_issue(
           @issue_repository,
           @issue_number,
           @issue_title,
-          nil,
-          to_issue.extract(:number, :title)
+          issue_body,
+          to_valid_issue
         )
       end
 
       def close_issue
+        return if @issue_repository.nil? || @issue_number.nil?
+
         Octokit.close_issue(
           @issue_repository,
           @issue_number,
-          to_issue.extract(:number)
+          to_valid_issue
         )
       end
 
@@ -146,9 +161,18 @@ module Trellohub
         end
       end
 
-      def to_issue
+      def to_valid_issue
         Hash[Trellohub::Form::Issue.valid_attributes.map { |key|
           [key, instance_variable_get(:"@issue_#{key}")]
+        }]
+      end
+
+      def to_issue
+        Hash[Trellohub::Form::Issue.accessible_attributes.map { |key|
+          [
+            key.to_s.gsub('issue_', '').to_sym,
+            instance_variable_get(:"@#{key}")
+          ]
         }]
       end
     end

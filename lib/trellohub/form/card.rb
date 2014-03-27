@@ -113,15 +113,15 @@ module Trellohub
       end
 
       def create_card
-        Trell.create_card(to_card)
+        Trell.create_card(to_valid_card)
       end
 
       def update_card
-        Trell.update_card(@card_id, to_card)
+        Trell.update_card(@card_id, to_valid_card)
       end
 
       def close_card
-        Trell.update_card(@card_id, to_card.merge(closed: true))
+        Trell.update_card(@card_id, to_valid_card.merge(closed: true))
       end
 
       def save_as_card
@@ -132,9 +132,18 @@ module Trellohub
         end
       end
 
-      def to_card
+      def to_valid_card
         Hash[Trellohub::Form::Card.valid_attributes.map { |key|
           [key, instance_variable_get(:"@card_#{key}")]
+        }]
+      end
+
+      def to_card
+        Hash[Trellohub::Form::Card.accessible_attributes.map { |key|
+          [
+            key.to_s.gsub('card_', '').to_sym,
+            instance_variable_get(:"@#{key}")
+          ]
         }]
       end
     end
