@@ -14,6 +14,7 @@ module Trellohub
           github_api_endpoint
           github_web_endpoint
           dry_run
+          debug
         )
       end
     end
@@ -32,6 +33,7 @@ module Trellohub
       @github_api_endpoint      = Octokit.api_endpoint
       @github_web_endpoint      = Octokit.web_endpoint
       @dry_run                  = false
+      @debug                    = true
     end
 
     def load!(config_file = nil)
