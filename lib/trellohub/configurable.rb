@@ -17,6 +17,19 @@ module Trellohub
           debug
         )
       end
+
+      def overrideable_keys
+        %i(
+          board_id
+          trello_application_key
+          trello_application_token
+          github_access_token
+          github_api_endpoint
+          github_web_endpoint
+          dry_run
+          debug
+        )
+      end
     end
 
     attr_accessor(*self.keys)
@@ -54,13 +67,10 @@ module Trellohub
     end
 
     def override!
-      @board_id                 = ENV['BOARD_ID'] if ENV['BOARD_ID']
-      @trello_application_key   = ENV['TRELLO_APPLICATION_KEY'] if ENV['TRELLO_APPLICATION_KEY']
-      @trello_application_token = ENV['TRELLO_APPLICATION_TOKEN'] if ENV['TRELLO_APPLICATION_TOKEN']
-      @github_access_token      = ENV['GITHUB_ACCESS_TOKEN'] if ENV['GITHUB_ACCESS_TOKEN']
-      @github_api_endpoint      = ENV['GITHUB_API_ENDPOINT'] if ENV['GITHUB_API_ENDPOINT']
-      @github_web_endpoint      = ENV['GITHUB_WEB_ENDPOINT'] if ENV['GITHUB_WEB_ENDPOINT']
-      @dry_run                  = !!ENV['DRY_RUN'] if ENV['DRY_RUN']
+      Trellohub::Configurable.overrideable_keys.each do |key|
+        env_name = key.to_s.upcase
+        instance_variable_set(:"@#{key}", ENV[env_name]) if ENV[env_name]
+      end
     end
 
     def init!
