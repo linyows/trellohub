@@ -28,13 +28,16 @@ module Trellohub
       end
 
       def print_request_summary
-        ap " Request Summary ".center(80, '=')
-        klasses = @called_requests.keys
-        klasses.each do |klass|
-          methods = @called_requests[klass].keys
-          methods.each do |method|
-            ap "#{klass} #{method.upcase}: #{@called_requests[klass][method].count}"
+        puts "## Request Summary"
+
+        if @called_requests
+          @called_requests.keys.each do |klass|
+            @called_requests[klass].keys.each do |method|
+              puts "- #{klass} #{method.upcase}: #{@called_requests[klass][method].count}"
+            end
           end
+        else
+          puts 'No requests'
         end
       end
 
@@ -48,8 +51,8 @@ module Trellohub
 
       def print_request(klass, method, path, *body)
         push_called_request(klass, method, path)
-
-        ap " #{klass} #{method.upcase} #{path} ".center(80, '-')
+        host = klass.split('::').first.constantize.web_endpoint
+        puts "[#{method.upcase}] #{host}#{path}"
         ap body
       end
     end
