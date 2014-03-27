@@ -83,8 +83,10 @@ module Trellohub
           @issue_assignee = member.username if member
         end
 
-        list = Trellohub::List.find_by(id: @origin_card.idList)
-        @issue_labels = list.name if list
+        if @card_list_name
+          label = Trellohub.list_by(name: @card_list_name).issue_label
+          @issue_labels = label ? [label] : []
+        end
       end
 
       %i(create update delete).each do |cud|
