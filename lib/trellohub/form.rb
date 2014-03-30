@@ -125,6 +125,14 @@ module Trellohub
       @state == 'closed'
     end
 
+    def own_key
+      if @imported_from == :issue
+        @key
+      else
+        @card_shortLink
+      end
+    end
+
     def to_hash
       Hash[instance_variables.map { |variable|
         next if variable.is_a?(Sawyer::Resource)
