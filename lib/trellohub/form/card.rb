@@ -92,16 +92,19 @@ module Trellohub
       %i(create update delete).each do |cud|
         class_eval <<-METHODS, __FILE__, __LINE__ + 1
           def card_#{cud}d_at
+            return if @card_id.nil?
             card_#{cud}_action.date if card_#{cud}_action
           end
 
           def card_#{cud}_user
+            return if @card_id.nil?
             if card_#{cud}_action && card_#{cud}_action.memberCreator
               card_#{cud}_action.memberCreator.username
             end
           end
 
           def card_#{cud}_action
+            return if @card_id.nil?
             @card_#{cud}_action ||= Trell.card_actions(@card_id, filter: '#{cud}Card').
               sort_by(&:date).last
           end
