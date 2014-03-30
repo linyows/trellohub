@@ -164,11 +164,15 @@ module Trellohub
         Hash[Trellohub::Form::Issue.valid_attributes.map { |key|
           value = instance_variable_get(:"@issue_#{key}")
 
-          if key == :labels && !value.empty? && @imported_from == :issue
+          case
+          when @imported_from == :issue && !value.empty?
             valid_label = value.find { |v| Trellohub.issue_labels.include?(v) }
             value = []
             value << valid_label if valid_label
-          end
+          when @imported_from == :card
+            form = Trellohub::Form.with_issues.find_by_key(@key)
+            value = form.issue_labels if form
+          end if key == :labels
 
           [key, value]
         }]
