@@ -21,7 +21,6 @@ module Trellohub
 
         def readable_attributes
           %i(
-            id
             labels
           ).map { |key| :"card_#{key}" }
         end
