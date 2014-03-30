@@ -3,8 +3,8 @@ module Trellohub
     def synchronize
       synchronize_to_cards_from_issues
       synchronize_to_issues_from_cards
-
       Trellohub::Mocking.print_request_summary if Trellohub.dry_run
+      true
     end
     alias_method :sync, :synchronize
 
