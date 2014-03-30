@@ -7,7 +7,7 @@ module Trellohub
         case
         when !id.nil?
           if member = @members.find { |key, value| value.id == id }
-            member
+            member.last
           else
             member = Trell.member(id)
             @members[:"#{member.username}"] = member
