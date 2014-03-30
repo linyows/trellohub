@@ -160,7 +160,15 @@ module Trellohub
 
       def to_valid_issue
         Hash[Trellohub::Form::Issue.valid_attributes.map { |key|
-          [key, instance_variable_get(:"@issue_#{key}")]
+          value = instance_variable_get(:"@issue_#{key}")
+
+          if key == :labels && !value.empty? && @imported_from == :issue
+            valid_label = value.find { |v| Trellohub.issue_labels.include?(v) }
+            value = []
+            value << valid_label if valid_label
+          end
+
+          [key, value]
         }]
       end
 
