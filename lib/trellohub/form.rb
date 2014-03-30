@@ -71,8 +71,8 @@ module Trellohub
 
         printings = [[
           "#{type} attr",
-          "#{'base'.yellow} (#{base.imported_from})",
-          "#{'comparison'.green} (#{type})"
+          "#{'base'.green} (#{base.imported_from})",
+          "#{'comparison'.yellow} (#{type})"
         ]] if Trellohub.debug
 
         diff = target.send(:"to_valid_#{type}").each.with_object({}) do |(key, value), hash|
@@ -81,8 +81,8 @@ module Trellohub
 
           printings << [
             key,
-            base_value.to_s.yellow,
-            value.to_s.color(value == base_value ? :green : :red)
+            base_value.to_s.color(value == base_value ? :green : :red),
+            value.to_s.yellow
           ] if Trellohub.debug
         end
 
