@@ -17,8 +17,6 @@ module Trellohub
           issue_form.save_as_card
         when Form.compare(issue_form, card_form)
           card_form.save_as_issue
-        when Form.compare(card_form, issue_form)
-          issue_form.save_as_card
         end
       end
     end
@@ -32,8 +30,6 @@ module Trellohub
           card_form.save_as_issue
         when Form.compare(card_form, issue_form)
           issue_form.save_as_card
-        when Form.compare(issue_form, card_form)
-          card_form.save_as_issue
         end
       end
     end
