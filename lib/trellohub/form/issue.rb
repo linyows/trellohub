@@ -105,7 +105,7 @@ module Trellohub
       end
 
       def issue_update?
-        !@issue_id.nil?
+        !@key.nil?
       end
 
       def issue_body
