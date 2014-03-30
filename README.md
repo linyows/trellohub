@@ -70,6 +70,10 @@ trello_application_token: dc71944d87340616f03a7647******************************
 github_access_token: e17e1c6caa******************************
 ```
 
+```sh
+$ env DEBUG=true env CONFIG_PATH=~/trellohub/boards/your_board_name.yml trellohub
+```
+
 Synchronizing
 -------------
 
