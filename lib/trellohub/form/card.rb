@@ -112,8 +112,17 @@ module Trellohub
         METHODS
       end
 
+      def card_id
+        if @card_id.nil? && @imported_from == :issue
+          form = Trellohub::Form.with_cards.find_by_key(@key)
+          @card_id = form.card_id if form
+        end
+
+        @card_id
+      end
+
       def card_update?
-        !@card_id.nil?
+        !card_id.nil?
       end
 
       def create_card
