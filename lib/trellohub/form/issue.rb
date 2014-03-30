@@ -12,16 +12,20 @@ module Trellohub
         end
 
         def accessible_attributes
-          self.valid_attributes.map { |key| :"issue_#{key}" }
+          self.prefix self.valid_attributes
         end
 
         def readable_attributes
-          %i(
+          self.prefix %i(
             number
             created_at
             updated_at
             closed_at
-          ).map { |key| :"issue_#{key}" }
+          )
+        end
+
+        def prefix(array)
+          array.map { |key| :"issue_#{key}" }
         end
 
         def included(base)

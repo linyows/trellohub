@@ -14,15 +14,15 @@ module Trellohub
         end
 
         def accessible_attributes
-          (self.valid_attributes + %i(
-            list_name
-          )).map { |key| :"card_#{key}" }
+          self.prefix(self.valid_attributes + %i(list_name))
         end
 
         def readable_attributes
-          %i(
-            labels
-          ).map { |key| :"card_#{key}" }
+          self.prefix %i(labels)
+        end
+
+        def prefix(array)
+          array.map { |key| :"card_#{key}" }
         end
 
         def included(base)
