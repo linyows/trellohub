@@ -90,11 +90,8 @@ module Trellohub
           max = printings.max_lengths
           printings.each.with_index(1) do |line, index|
             puts '[DIFF: Update the base]' if index == 1
-            if index == 2
-              puts 3.times.map.with_index { |i| ''.ljust(max[i], '-') }.join(' | ')
-            else
-              puts line.map.with_index { |word, i| "#{word}".ljust(max[i]) }.join(' | ')
-            end
+            puts 3.times.map.with_index { |i| ''.ljust(max[i], '-') }.join(' | ') if index == 2
+            puts line.map.with_index { |word, i| "#{word}".ljust(max[i]) }.join(' | ')
           end
         end
 
