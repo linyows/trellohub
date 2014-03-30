@@ -86,7 +86,7 @@ module Trellohub
           ] if Trellohub.debug
         end
 
-        if Trellohub.debug
+        if Trellohub.debug && !diff.empty?
           max = printings.max_lengths
           printings.each.with_index(1) do |line, index|
             if index == 2
