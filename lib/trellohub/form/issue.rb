@@ -64,11 +64,7 @@ module Trellohub
             when :assignee
               @origin_issue.assignee ? @origin_issue.assignee.login : nil
             when :labels
-              if @origin_issue.labels.empty?
-                @origin_issue.labels
-              else
-                @origin_issue.labels.map(&:name)
-              end
+              @origin_issue.labels.empty? ? [] : @origin_issue.labels.map(&:name)
             else
               @origin_issue.send(key)
             end
