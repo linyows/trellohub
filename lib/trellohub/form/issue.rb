@@ -87,11 +87,12 @@ module Trellohub
       alias_method :issue_repo_name, :issue_repository_name
 
       def assign_card_members_by_issue
+        @card_idMembers = []
         return unless @origin_issue.assignee
 
         member = Trellohub::Member.find_by(username: @origin_issue.assignee.login)
         unless member.nil?
-          @card_idMembers = [member.id]
+          @card_idMembers << member.id
         end
       end
 
