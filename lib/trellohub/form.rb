@@ -89,6 +89,7 @@ module Trellohub
         if Trellohub.debug && !diff.empty?
           max = printings.max_lengths
           printings.each.with_index(1) do |line, index|
+            puts '[DIFF: Update the base]' if index == 1
             if index == 2
               puts 3.times.map.with_index { |i| ''.ljust(max[i], '-') }.join(' | ')
             else
