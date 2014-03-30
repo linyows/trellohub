@@ -9,4 +9,18 @@ describe Trellohub do
       end
     end
   end
+
+  describe '.default!' do
+    it 'sets defaults' do
+      Trellohub.default!
+      expect(Trellohub.config_file).to be_nil
+      expect(Trellohub.repositories).to eq []
+      expect(Trellohub.lists).to eq []
+      expect(Trellohub.options).to eq(default_assignee: true, default_member: true)
+      expect(Trellohub.github_api_endpoint).to eq Octokit.api_endpoint
+      expect(Trellohub.github_web_endpoint).to eq Octokit.web_endpoint
+      expect(Trellohub.dry_run).to eq false
+      expect(Trellohub.debug).to eq true
+    end
+  end
 end
