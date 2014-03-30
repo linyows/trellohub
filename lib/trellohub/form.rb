@@ -70,7 +70,7 @@ module Trellohub
         type = target.imported_from
 
         printings = [[
-          "#{type} attr",
+          "#{type} attribute",
           "#{'base'.green} (#{base.imported_from}: #{base.own_key}, #{base.updated_at})",
           "#{'comparison'.yellow} (#{target.imported_from}: #{target.own_key}, #{target.updated_at})"
         ]] if Trellohub.debug
