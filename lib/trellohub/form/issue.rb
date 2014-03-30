@@ -12,9 +12,7 @@ module Trellohub
         end
 
         def accessible_attributes
-          (self.valid_attributes + %i(
-            body
-           )).map { |key| :"issue_#{key}" }
+          self.valid_attributes.map { |key| :"issue_#{key}" }
         end
 
         def readable_attributes
