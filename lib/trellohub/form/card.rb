@@ -107,6 +107,7 @@ module Trellohub
             return if @card_id.nil?
             @card_#{cud}_action ||= Trell.card_actions(@card_id, filter: '#{cud}Card').
               sort_by(&:date).last
+          rescue Trell::NotFound
           end
         METHODS
       end
