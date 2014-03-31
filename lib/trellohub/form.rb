@@ -67,7 +67,7 @@ module Trellohub
 
       def compare(base, target)
         return unless base.updated_at < target.updated_at
-        type = target.imported_from
+        type = base.imported_from
 
         printings = [[
           "#{type} attribute",
