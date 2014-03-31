@@ -65,17 +65,17 @@ module Trellohub
         array
       end
 
-      def compare(base, target)
-        return unless base.updated_at < target.updated_at
+      def compare(base, comparison)
+        return unless base.updated_at < comparison.updated_at
         type = base.imported_from
 
         printings = [[
           "#{type.to_s.bright.underline} attribute",
           "#{'base'.yellow} (#{base.imported_from}: #{base.own_key}, #{base.updated_at})",
-          "#{'comparison'.cyan} (#{target.imported_from}: #{target.own_key}, #{target.updated_at})"
+          "#{'comparison'.cyan} (#{comparison.imported_from}: #{comparison.own_key}, #{comparison.updated_at})"
         ]] if Trellohub.debug
 
-        diff = target.send(:"to_valid_#{type}").each.with_object({}) do |(key, value), hash|
+        diff = comparison.send(:"to_valid_#{type}").each.with_object({}) do |(key, value), hash|
           base_value = base.send(:"to_valid_#{type}")[key]
           hash[key] = value unless value == base_value
 
