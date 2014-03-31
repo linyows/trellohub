@@ -70,9 +70,9 @@ module Trellohub
         type = base.imported_from
 
         printings = [[
-          "#{type} attribute",
-          "#{'base'.green} (#{base.imported_from}: #{base.own_key}, #{base.updated_at})",
-          "#{'comparison'.yellow} (#{target.imported_from}: #{target.own_key}, #{target.updated_at})"
+          "#{type.to_s.bright.underline} attribute",
+          "#{'base'.yellow} (#{base.imported_from}: #{base.own_key}, #{base.updated_at})",
+          "#{'comparison'.cyan} (#{target.imported_from}: #{target.own_key}, #{target.updated_at})"
         ]] if Trellohub.debug
 
         diff = target.send(:"to_valid_#{type}").each.with_object({}) do |(key, value), hash|
@@ -81,8 +81,8 @@ module Trellohub
 
           printings << [
             key,
-            base_value.to_s.color(value == base_value ? :green : :red),
-            value.to_s.yellow
+            base_value.to_s.color(value == base_value ? :yellow : :red),
+            value.to_s.color(value == base_value ? :cyan : :green)
           ] if Trellohub.debug
         end
 
