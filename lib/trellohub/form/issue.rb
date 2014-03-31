@@ -18,6 +18,7 @@ module Trellohub
         def readable_attributes
           self.prefix %i(
             number
+            repository
             created_at
             updated_at
             closed_at
@@ -108,6 +109,10 @@ module Trellohub
 
       def issue_update?
         !@key.nil?
+      end
+
+      def issue_there?
+        !!Trellohub::Form.with_issues.find_by_key(@key) if @key
       end
 
       def issue_body

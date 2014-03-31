@@ -26,6 +26,8 @@ module Trellohub
         issue_form = Form.with_issues.find_by_key(card_form.key)
 
         case
+        when issue_form.nil? && card_form.issue_update?
+          card_form.delete
         when issue_form.nil?
           card_form.save_as_issue
         when Form.compare(card_form, issue_form)

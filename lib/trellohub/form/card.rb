@@ -144,6 +144,10 @@ module Trellohub
         end
       end
 
+      def delete
+        Trell.delete_card(@card_id) if @card_id
+      end
+
       def to_valid_card
         Hash[Trellohub::Form::Card.valid_attributes.map { |key|
           [key, instance_variable_get(:"@card_#{key}")]
