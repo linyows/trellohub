@@ -1,5 +1,5 @@
-Trellohub (trello cards x github issues)
-========================================
+Trellohub
+=========
 
 Trellohub is uniform task management by synchronizing the github issues and trello cards.
 
