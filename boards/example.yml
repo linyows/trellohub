@@ -16,7 +16,7 @@ lists:
   - name: Done
     issue_label: done
   - name: Recent Closed
-    issue_closed_at: '>= Time.now.utc -60*60*24*7'
+    issue_closed_at: '>= Time.now.utc - 60*60*24*7'
 trello_application_key: 429452e37b7e********************
 trello_application_token: dc71944d87340616f03a7647****************************************
 github_access_token: e17e1c6caa******************************
