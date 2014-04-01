@@ -79,11 +79,21 @@ module Trellohub
           base_value = base.send(:"to_valid_#{type}")[key]
           hash[key] = value unless value == base_value
 
-          printings << [
-            key,
-            base_value.to_s.color(value == base_value ? :yellow : :red),
-            value.to_s.color(value == base_value ? :cyan : :green)
-          ] if Trellohub.debug
+          if Trellohub.debug
+            _base = base_value.to_s.color(value == base_value ? :yellow : :red)
+            _comparison = value.to_s.color(value == base_value ? :cyan : :green)
+
+            case key
+            when :idList
+              _base += " (#{base.card_list_name})"
+              _comparison += " (#{comparison.card_list_name})"
+            when :idMembers
+              _base += " (#{base.card_members})"
+              _comparison += " (#{base.card_members})"
+            end
+
+            printings << [key, _base, _comparison]
+          end
         end
 
         if Trellohub.debug && !diff.empty?

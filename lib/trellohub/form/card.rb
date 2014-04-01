@@ -14,7 +14,7 @@ module Trellohub
         end
 
         def accessible_attributes
-          self.prefix(self.valid_attributes + %i(list_name))
+          self.prefix(self.valid_attributes + %i(list_name members))
         end
 
         def readable_attributes
@@ -62,6 +62,11 @@ module Trellohub
       def build_card_attributes_by_card
         list = Trellohub::List.find_by(id: @origin_card.idList)
         @card_list_name = list.name if list
+
+        @card_members = @origin_card.idMembers.map { |member_id|
+          member = Trellohub::Member.find_by(id: member_id)
+          member.username if member
+        }.compact unless @origin_card.idMembers.empty?
       end
 
       def build_issue_attributes_by_card
