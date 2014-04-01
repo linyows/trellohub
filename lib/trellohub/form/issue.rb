@@ -101,10 +101,14 @@ module Trellohub
 
       def assign_card_list_by_issue
         labels = @origin_issue.labels.map(&:name).uniq
-        list = Trellohub.list_by(labels: labels)
-        return unless list
-        @card_idList = list.id
-        @card_list_name = list.name
+        labels.each { |label_name| break if list = Trellohub.list_by(label: label_name) }
+
+        list = Trellohub.default_list if list.nil?
+
+        unless list.nil?
+          @card_idList = list.id
+          @card_list_name = list.name
+        end
       end
 
       def issue_update?

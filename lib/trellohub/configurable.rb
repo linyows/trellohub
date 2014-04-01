@@ -104,7 +104,7 @@ module Trellohub
     end
     alias_method :conf, :configurations
 
-    def list_by(name: nil, default: nil, label: nil, labels: [])
+    def list_by(name: nil, default: nil, label: nil)
       case
       when name
         @lists.find { |list| list.name == name }
@@ -112,13 +112,9 @@ module Trellohub
         @lists.find { |list| list.default == true }
       when label
         @lists.find { |list| list.issue_label == label }
-      else
-        labels.each { |label_name|
-          list = Trellohub.list_by(label: label_name)
-          return list if list
-        } unless labels.empty?
+      end
+    end
 
-        Trellohub.default_list
       end
     end
 
