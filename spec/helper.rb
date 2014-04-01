@@ -2,17 +2,18 @@
 
 require 'simplecov'
 require 'coveralls'
-require 'trellohub'
-require 'rspec'
-require 'ap'
-require 'vcr'
-require 'webmock/rspec'
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
 ]
 SimpleCov.start
+
+require 'trellohub'
+require 'rspec'
+require 'ap'
+require 'vcr'
+require 'webmock/rspec'
 
 WebMock.disable_net_connect!(allow: 'coveralls.io')
 RSpec.configure { |c| c.include WebMock::API }
