@@ -15,7 +15,7 @@ Trellohub is uniform task management by synchronizing the github issues and trel
 [codeclimate]: https://codeclimate.com/github/linyows/trellohub
 [coveralls]: https://coveralls.io/r/linyows/trellohub
 
-<p align=center><img src="http://octodex.github.com/images/forktocat.jpg" width=500></p>
+<p align=center><img src="https://raw.githubusercontent.com/linyows/trellohub/master/images/forktocat.png" alt="trellohub"></p>
 
 Installation
 ------------
