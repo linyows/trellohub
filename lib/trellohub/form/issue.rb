@@ -178,9 +178,6 @@ module Trellohub
             valid_label = value.find { |v| Trellohub.issue_labels.include?(v) }
             value = []
             value << valid_label if valid_label
-          when @imported_from == :card
-            form = Trellohub::Form.with_issues.find_by_key(@key)
-            value = form.issue_labels if form
           end if key == :labels
 
           [key, value]
