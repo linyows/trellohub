@@ -115,6 +115,14 @@ module Trellohub
       end
     end
 
+    def list_custom_conditions
+      @list_custom_conditions ||= @lists.select { |list| list.default.nil? && list.issue_label.nil? }.
+        each.with_object([]) do |list, arr|
+        arr << {
+          list_name: list.name,
+          attribute: list.to_h.extract(:name).keys.last,
+          condition: list.to_h.extract(:name).values.last
+        }
       end
     end
 

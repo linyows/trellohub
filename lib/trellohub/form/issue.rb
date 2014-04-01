@@ -100,8 +100,24 @@ module Trellohub
       end
 
       def assign_card_list_by_issue
-        labels = @origin_issue.labels.map(&:name).uniq
-        labels.each { |label_name| break if list = Trellohub.list_by(label: label_name) }
+        list = nil
+
+        Trellohub.list_custom_conditions.each do |cond|
+          code = <<-CODE.gsub("\s", ' ')
+            @origin_issue.#{cond[:attribute].to_s.gsub('issue_', '')} &&
+            @origin_issue.#{cond[:attribute].to_s.gsub('issue_', '')} #{cond[:condition]}
+          CODE
+
+          if eval code
+            list = Trellohub.list_by(name: cond[:list_name])
+            break if list
+          end
+        end
+
+        if list.nil?
+          labels = @origin_issue.labels.map(&:name).uniq
+          labels.each { |label_name| break if list = Trellohub.list_by(label: label_name) }
+        end
 
         list = Trellohub.default_list if list.nil?
 
