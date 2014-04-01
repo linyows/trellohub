@@ -1,5 +1,5 @@
-Trellohub
-=========
+Trellohub (trello cards x github issues)
+========================================
 
 Trellohub is uniform task management by synchronizing the github issues and trello cards.
 
@@ -14,6 +14,8 @@ Trellohub is uniform task management by synchronizing the github issues and trel
 [gemnasium]: https://gemnasium.com/linyows/trellohub
 [codeclimate]: https://codeclimate.com/github/linyows/trellohub
 [coveralls]: https://coveralls.io/r/linyows/trellohub
+
+<p align=center><img src="http://octodex.github.com/images/forktocat.jpg" width=500></p>
 
 Installation
 ------------
@@ -71,7 +73,7 @@ github_access_token: e17e1c6caa******************************
 ```
 
 ```sh
-$ env DEBUG=true env CONFIG_PATH=~/trellohub/boards/your_board_name.yml trellohub
+$ env CONFIG_PATH=~/trellohub/boards/your_board_name.yml trellohub
 ```
 
 Synchronizing
