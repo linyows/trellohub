@@ -3,6 +3,14 @@ require 'ostruct'
 module Trellohub
   class Repository < OpenStruct
     def issues
+      issues_with_state_all
+    rescue Octokit::UnprocessableEntity
+      issues_without_state_all
+    rescue Octokit::NotFound
+      []
+    end
+
+    def issues_with_state_all
       @issues ||= case
         when milestone.is_a?(String)
           []
@@ -11,10 +19,10 @@ module Trellohub
         else
           Octokit.issues(full_name, milestone: milestone.number, state: 'all')
         end
-    rescue Octokit::NotFound
-      []
+    end
+
     # The "state: all" option was not supported by GitHub Enterprise API
-    rescue Octokit::UnprocessableEntity
+    def issues_without_state_all
       @issues ||= case
         when milestone.nil?
           Octokit.issues(full_name, state: 'open') +
