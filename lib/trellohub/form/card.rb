@@ -173,7 +173,7 @@ module Trellohub
         card_id? && open?
       end
 
-      def update_card?
+      def close_card?
         card_id? && close?
       end
 
