@@ -138,10 +138,12 @@ module Trellohub
       @lists.map(&:issue_label).compact
     end
 
-    def repository_by(full_name: nil, milestone: nil)
+    def repository_by(full_name: nil, name: nil, milestone: nil)
       case
       when full_name
         @repositories.find { |repo| repo.full_name == full_name }
+      when name
+        @repositories.find { |repo| repo.name == name }
       when milestone
         @repositories.find { |repo| repo.milestone == milestone }
       end

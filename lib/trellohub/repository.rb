@@ -2,6 +2,10 @@ require 'ostruct'
 
 module Trellohub
   class Repository < OpenStruct
+    def name
+      full_name.split('/').last
+    end
+
     def issues
       issues_with_state_all
     rescue Octokit::UnprocessableEntity

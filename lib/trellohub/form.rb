@@ -133,6 +133,10 @@ module Trellohub
       @state == 'closed'
     end
 
+    def key?
+      !@key.nil?
+    end
+
     def own_key
       if @imported_from == :issue
         @key

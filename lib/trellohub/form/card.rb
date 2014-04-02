@@ -55,8 +55,16 @@ module Trellohub
         /synced_issue:\shttps?:\/\/.*?\/([\w\-\/]+)\/(?:issues|pulls)\/(\d+)/
       end
 
+      def issue_creation_matcher
+        /^((?:[\w\-]+\/)?([\w\-]+))#\s/
+      end
+
       def card_name_prefix_matcher
-        /^[\w\-]+#\d+\s/
+        /^[\w\-]+#(\d+)?\s/
+      end
+
+      def scrum_point_matcher
+        /\(\d+\)/
       end
 
       def build_card_attributes_by_card
@@ -69,8 +77,16 @@ module Trellohub
         }.compact unless @origin_card.idMembers.empty?
       end
 
+      def sanitized_card_name
+        @origin_card.name.gsub(scrum_point_matcher, '').strip
+      end
+
+      def card_name_without_prefix
+        sanitized_card_name.gsub(card_name_prefix_matcher, '').strip
+      end
+
       def build_issue_attributes_by_card
-        @issue_title = @origin_card.name.gsub(card_name_prefix_matcher, '')
+        @issue_title = card_name_without_prefix
         @issue_state = @state = @origin_card.closed ? 'closed' : 'open'
 
         if @origin_card.desc =~ key_matcher
@@ -80,6 +96,11 @@ module Trellohub
 
           repo = Trellohub.repository_by(full_name: @issue_repository)
           @issue_milestone = repo.milestone.title if repo.milestone?
+
+        elsif sanitized_card_name =~ issue_creation_matcher
+          search_key = $1 == $2 ? :name : :full_name
+          repo = Trellohub.repository_by(:"#{search_key}" => $1)
+          @issue_repository = repo.full_name if repo
         end
 
         unless @origin_card.idMembers.empty?
@@ -125,8 +146,20 @@ module Trellohub
         @card_id
       end
 
-      def card_update?
+      def card_id?
         !card_id.nil?
+      end
+
+      def create_card?
+        open?
+      end
+
+      def update_card?
+        card_id? && open?
+      end
+
+      def update_card?
+        card_id? && close?
       end
 
       def create_card
@@ -143,9 +176,9 @@ module Trellohub
 
       def save_as_card
         case
-        when card_update? && open? then update_card
-        when card_update? && closed? then close_card
-        when open? then create_card
+        when update_card? then update_card
+        when close_card? then close_card
+        when create_card? then create_card
         end
       end
 

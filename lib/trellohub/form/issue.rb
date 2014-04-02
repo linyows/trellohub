@@ -51,8 +51,8 @@ module Trellohub
       def build_card_attributes_by_issue
         @card_idBoard = Trellohub::Board.id
         @card_name = "#{issue_repo_name}##{@origin_issue.number} #{@origin_issue.title}"
-        @card_desc = "synced_issue: #{Octokit.web_endpoint}#{@issue_repository}/issues/#{@origin_issue.number}"
         @card_closed = @origin_issue.state == 'closed'
+        assign_card_desc_by_issue
         assign_card_members_by_issue
         assign_card_list_by_issue
       end
@@ -127,12 +127,24 @@ module Trellohub
         end
       end
 
-      def issue_update?
-        !@key.nil?
+      def issue_repository?
+        !@issue_repository.nil?
+      end
+
+      def create_issue?
+        !key? && issue_repository? && open?
+      end
+
+      def update_issue?
+        key? && open?
+      end
+
+      def close_issue?
+        key? && close?
       end
 
       def issue_there?
-        !!Trellohub::Form.with_issues.find_by_key(@key) if @key
+        !!Trellohub::Form.with_issues.find_by_key(@key) if key?
       end
 
       def issue_body
@@ -144,13 +156,17 @@ module Trellohub
         @issue_body
       end
 
+      def default_issue_body
+        "created by @#{card_create_user || card_update_user} in trello: #{@card_shortUrl}"
+      end
+
       def create_issue
         return if @issue_repository.nil? || @issue_title.nil?
 
         Octokit.create_issue(
           @issue_repository,
           @issue_title,
-          nil,
+          default_issue_body,
           to_valid_issue
         )
       end
@@ -177,10 +193,23 @@ module Trellohub
         )
       end
 
+      def inject_issue_number_to_card_name(number = nil)
+        @card_name.gsub!(/#\s/, "##{@issue_number ||= number} ")
+      end
+
+      def assign_card_desc_by_issue
+        @card_desc = "synced_issue: #{Octokit.web_endpoint}#{@issue_repository}/issues/#{@issue_number}"
+      end
+
       def save_as_issue
         case
-        when issue_update? && open? then update_issue
-        when issue_update? && closed? then close_issue
+        when create_issue?
+          if issue = create_issue
+            inject_issue_number_to_card_name(issue.number)
+            assign_card_desc_by_issue
+          end
+        when update_issue? then update_issue
+        when close_issue? then close_issue
         when open? then create_issue
         end
       end

@@ -1,12 +1,21 @@
 module Trellohub
   module Synchronal
     def synchronize
+      fetch
+
       synchronize_to_cards_from_issues
       synchronize_to_issues_from_cards
+
       Trellohub::Mocking.print_request_summary if Trellohub.dry_run
+
       true
     end
     alias_method :sync, :synchronize
+
+    def fetch
+      Form.with_issues!
+      Form.with_cards!
+    end
 
     def synchronize_to_cards_from_issues
       Form.with_issues.each do |issue_form|
@@ -26,7 +35,7 @@ module Trellohub
         issue_form = Form.with_issues.find_by_key(card_form.key)
 
         case
-        when issue_form.nil? && card_form.issue_update?
+        when issue_form.nil? && card_form.update_issue?
           card_form.delete
         when issue_form.nil?
           card_form.save_as_issue
