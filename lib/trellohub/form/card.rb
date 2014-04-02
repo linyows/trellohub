@@ -93,25 +93,40 @@ module Trellohub
           @issue_repository = $1
           @issue_number = $2
           @key = "#{$1}##{$2}"
-
-          repo = Trellohub.repository_by(full_name: @issue_repository)
-          @issue_milestone = repo.milestone.title if repo.milestone?
+          assign_issue_milestone_by_card
 
         elsif sanitized_card_name =~ issue_creation_matcher
           search_key = $1 == $2 ? :name : :full_name
           repo = Trellohub.repository_by(:"#{search_key}" => $1)
-          @issue_repository = repo.full_name if repo
+          if repo
+            @issue_repository = repo.full_name
+            assign_issue_milestone_by_card
+          end
         end
 
-        unless @origin_card.idMembers.empty?
-          member = Trellohub::Member.find_by(id: @origin_card.idMembers.first)
-          @issue_assignee = member.username if member
-        end
+        assign_issue_assignee_by_card
+        assign_issue_labels_by_card
+      end
 
-        if @card_list_name
-          label = Trellohub.list_by(name: @card_list_name).issue_label
-          @issue_labels = label ? [label] : []
+      def assign_issue_milestone_by_card
+        repo = Trellohub.repository_by(full_name: @issue_repository)
+
+        if repo.milestone?
+          @issue_milestone = repo.milestone.number
+          @issue_milestone_title = repo.milestone.title
         end
+      end
+
+      def assign_issue_assignee_by_card
+        return if @origin_card.idMembers.empty?
+        member = Trellohub::Member.find_by(id: @origin_card.idMembers.first)
+        @issue_assignee = member.username if member
+      end
+
+      def assign_issue_labels_by_card
+        return unless @card_list_name
+        label = Trellohub.list_by(name: @card_list_name).issue_label
+        @issue_labels = label ? [label] : []
       end
 
       %i(create update delete).each do |cud|

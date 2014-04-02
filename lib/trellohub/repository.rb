@@ -46,6 +46,10 @@ module Trellohub
       @milestone
     end
 
+    def milestone?
+      @milestone.is_a?(Sawyer::Resource)
+    end
+
     def find_milestone
       return nil if all_milestones.empty?
       milestone = @all_milestones.find { |m| m.title == @milestone }

@@ -8,11 +8,12 @@ module Trellohub
             labels
             state
             assignee
+            milestone
           )
         end
 
         def accessible_attributes
-          self.prefix self.valid_attributes
+          self.prefix(self.valid_attributes + %i(milestone_title))
         end
 
         def readable_attributes
@@ -44,18 +45,14 @@ module Trellohub
         @state = @origin_issue.state
         @imported_from = :issue
 
-        build_card_attributes_by_issue
         build_issue_attributes_by_issue
+        build_card_attributes_by_issue
       end
 
-      def build_card_attributes_by_issue
-        @card_idBoard = Trellohub::Board.id
-        @card_name = "#{issue_repo_name}##{@origin_issue.number} #{@origin_issue.title}"
-        @card_closed = @origin_issue.state == 'closed'
-        assign_card_desc_by_issue
-        assign_card_members_by_issue
-        assign_card_list_by_issue
+      def issue_repository_name
+        @issue_repository.split('/').last
       end
+      alias_method :issue_repo_name, :issue_repository_name
 
       def build_issue_attributes_by_issue
         @origin_issue.attrs.keys.each do |key|
@@ -84,10 +81,14 @@ module Trellohub
         end
       end
 
-      def issue_repository_name
-        @issue_repository.split('/').last
+      def build_card_attributes_by_issue
+        @card_idBoard = Trellohub::Board.id
+        @card_name = "#{issue_repo_name}##{@origin_issue.number} #{@origin_issue.title}"
+        @card_closed = @origin_issue.state == 'closed'
+        assign_card_desc_by_issue
+        assign_card_members_by_issue
+        assign_card_list_by_issue
       end
-      alias_method :issue_repo_name, :issue_repository_name
 
       def assign_card_members_by_issue
         @card_idMembers = []
@@ -207,6 +208,7 @@ module Trellohub
           if issue = create_issue
             inject_issue_number_to_card_name(issue.number)
             assign_card_desc_by_issue
+            update_card
           end
         when update_issue? then update_issue
         when close_issue? then close_issue
