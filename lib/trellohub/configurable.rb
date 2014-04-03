@@ -4,7 +4,7 @@ module Trellohub
       def keys
         %i(
           config_file
-          board_id
+          board_key
           repositories
           lists
           options
@@ -20,7 +20,7 @@ module Trellohub
 
       def overrideable_keys
         %i(
-          board_id
+          board_key
           trello_application_key
           trello_application_token
           github_access_token
@@ -168,6 +168,18 @@ module Trellohub
     def dry_run=(bool)
       @dry_run = bool
       Mocking.send(@dry_run ? :start : :stop)
+    end
+
+    def board_id
+      @board_id ||= if self.shortlink_board_key?
+          Trell.board(Trellohub.board_key).id
+        else
+          Trellohub.board_key
+        end
+    end
+
+    def shortlink_board_key?
+      Trellohub.board_key.length < 24
     end
   end
 end
