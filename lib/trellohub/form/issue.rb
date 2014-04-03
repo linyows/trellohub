@@ -161,8 +161,14 @@ module Trellohub
         "created by @#{card_create_user || card_update_user} in trello: #{@card_shortUrl}"
       end
 
+      def print_issue_attributes(title = nil)
+        print_attributes('issue', title)
+      end
+
       def create_issue
         return if @issue_repository.nil? || @issue_title.nil?
+
+        print_issue_attributes('Create a Issue')
 
         Octokit.create_issue(
           @issue_repository,

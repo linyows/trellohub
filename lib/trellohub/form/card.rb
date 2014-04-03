@@ -177,7 +177,12 @@ module Trellohub
         card_id? && close?
       end
 
+      def print_card_attributes(title = nil)
+        print_attributes('card', title)
+      end
+
       def create_card
+        print_card_attributes('Create a Card')
         Trell.create_card(to_valid_card)
       end
 
