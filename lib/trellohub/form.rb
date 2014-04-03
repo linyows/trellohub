@@ -140,6 +140,18 @@ module Trellohub
       end
     end
 
+    def print_attributes(type, title)
+      return unless Trellohub.debug
+
+      send(:"to_#{type}").map { |key, value|
+        if "Trellohub::Form::#{type.capitalize}".constantize.valid_attributes.include?(key)
+          [key.to_s.yellow, value.to_s.green]
+        else
+          [key, value]
+        end
+      }.puts_with_vl(title: title, header: false)
+    end
+
     def to_hash
       Hash[instance_variables.map { |variable|
         next if variable.is_a?(Sawyer::Resource)
