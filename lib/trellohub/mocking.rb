@@ -53,7 +53,7 @@ module Trellohub
         push_called_request(klass, method, path)
         host = klass.split('::').first.constantize.web_endpoint
         puts "[#{method.upcase}] #{host}#{path}"
-        ap body
+        ap body unless body == [{}]
       end
     end
 
