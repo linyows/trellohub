@@ -27,6 +27,12 @@ module Trellohub
     end
 
     class << self
+      def setup!
+        Trellohub.lists.each do |list|
+          list.id
+        end
+      end
+
       def all
         @all || self.all!
       end
