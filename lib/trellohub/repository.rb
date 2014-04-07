@@ -15,14 +15,18 @@ module Trellohub
     end
 
     def issues_with_state_all
-      @issues ||= case
-        when milestone.is_a?(String)
-          []
-        when milestone.nil?
-          Octokit.issues(full_name, state: 'all')
-        else
-          Octokit.issues(full_name, milestone: milestone.number, state: 'all')
-        end
+      @issues ||= issues_with_state_all!
+    end
+
+    def issues_with_state_all!
+      case
+      when milestone.is_a?(String) && milestone != 'none'
+        []
+      when milestone.nil?
+        Octokit.issues(full_name, state: 'all')
+      else
+        Octokit.issues(full_name, milestone: milestone_key, state: 'all')
+      end
     end
 
     # The "state: all" option was not supported by GitHub Enterprise API
