@@ -45,6 +45,10 @@ module Trellohub
       end
     end
 
+    def milestone_key
+      milestone? ? milestone.number : milestone
+    end
+
     def milestone
       @milestone ||= super
       if @milestone.is_a?(String)
