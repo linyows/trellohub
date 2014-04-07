@@ -91,12 +91,13 @@ module Trellohub
       end
 
       def assign_card_members_by_issue
-        @card_idMembers = []
+        @card_idMembers = @card_members = []
         return unless @origin_issue.assignee
 
         member = Trellohub::Member.find_by(username: @origin_issue.assignee.login)
         unless member.nil?
           @card_idMembers << member.id
+          @card_members << member.username
         end
       end
 
