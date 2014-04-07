@@ -111,7 +111,7 @@ module Trellohub
       def assign_issue_milestone_by_card
         repo = Trellohub.repository_by(full_name: @issue_repository)
 
-        if repo.milestone?
+        if repo && repo.milestone?
           @issue_milestone = repo.milestone.number
           @issue_milestone_title = repo.milestone.title
         end
