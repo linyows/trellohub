@@ -59,4 +59,53 @@ describe Trellohub::Form do
       expect(Trellohub::Form.with_issues_on repo).to eq [form]
     end
   end
+
+  describe '#with_cards' do
+    it 'calls #with_cards! at once' do
+      expect(Trellohub::Form).to receive(:with_cards!).once.and_return 'hello'
+      Trellohub::Form.with_cards
+      Trellohub::Form.with_cards
+    end
+  end
+
+  describe '#with_cards!' do
+    it 'calls Trellohub::Card.all and Trellohub::Form.array_ext' do
+      card = double('card')
+      expect(Trellohub::Card).to receive(:all).and_return([card])
+      form = double('form')
+      expect(form).to receive(:import_card).with(card)
+      expect(Trellohub::Form).to receive(:new).once.and_return(form)
+      expect(Trellohub::Form.with_cards!).to eq [form]
+    end
+  end
+
+  describe '#compare' do
+    context 'when comparison is newer than base' do
+      context 'there is a diff' do
+        it '' do
+        end
+      end
+
+      context 'there is no diff' do
+        it 'returns nil' do
+          base = Trellohub::Form.new
+          expect(base).to receive(:updated_at).and_return(Time.now.utc - 60*60*24)
+          expect(base).to receive(:imported_from).and_return(:issue)
+          comparison = Trellohub::Form.new
+          expect(comparison).to receive(:updated_at).and_return(Time.now.utc)
+          expect(Trellohub::Form.compare(base, comparison)).to eq nil
+        end
+      end
+    end
+
+    context 'when base is newer than comparison' do
+      it 'returns nil' do
+        base = double('base')
+        expect(base).to receive(:updated_at).and_return(Time.now.utc)
+        comparison = double('comparison')
+        expect(comparison).to receive(:updated_at).and_return(Time.now.utc - 60*60*24)
+        expect(Trellohub::Form.compare base, comparison).to eq nil
+      end
+    end
+  end
 end
