@@ -49,5 +49,14 @@ describe Trellohub::Form do
   end
 
   describe '#with_issues_on' do
+    it 'calls issues of repository' do
+      repo = double('repository', full_name: 'aaa/bbb')
+      issue = double('issue')
+      expect(repo).to receive(:issues) { [issue] }
+      form = double('form')
+      expect(form).to receive(:import_issue).with('aaa/bbb', issue)
+      expect(Trellohub::Form).to receive(:new).once.and_return(form)
+      expect(Trellohub::Form.with_issues_on repo).to eq [form]
+    end
   end
 end
