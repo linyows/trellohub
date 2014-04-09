@@ -62,7 +62,7 @@ module Trellohub
             when :user
               @origin_issue.user.login
             when :assignee
-              @origin_issue.assignee ? @origin_issue.assignee.login : nil
+              @origin_issue.assignee ? @origin_issue.assignee.login : ''
             when :labels
               @origin_issue.labels.empty? ? [] : @origin_issue.labels.map(&:name)
             else

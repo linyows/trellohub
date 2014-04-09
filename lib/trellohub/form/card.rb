@@ -118,6 +118,7 @@ module Trellohub
       end
 
       def assign_issue_assignee_by_card
+        @issue_assignee = ''
         return if @origin_card.idMembers.empty?
         member = Trellohub::Member.find_by(id: @origin_card.idMembers.first)
         @issue_assignee = member.username if member
