@@ -89,7 +89,7 @@ module Trellohub
               _comparison += " (#{comparison.card_list_name})"
             when :idMembers
               _base += " (#{base.card_members})"
-              _comparison += " (#{base.card_members})"
+              _comparison += " (#{comparison.card_members})"
             end
 
             printings << [key, _base, _comparison]
