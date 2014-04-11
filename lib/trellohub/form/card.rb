@@ -175,7 +175,7 @@ module Trellohub
       end
 
       def close_card?
-        card_id? && close?
+        card_id? && closed?
       end
 
       def print_card_attributes(title = nil)
