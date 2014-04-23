@@ -39,4 +39,33 @@ describe Trellohub::Form::Issue do
       )
     end
   end
+
+  describe '#prefix' do
+    it 'returns prefixed symbol array' do
+      expect(Trellohub::Form::Issue.prefix %w(aaa bbb)).to eq %i(issue_aaa issue_bbb)
+    end
+  end
+
+  describe '.import_issue' do
+    it 'imports a issue' do
+      duped_issue = double
+      expect(duped_issue).to receive(:number)
+      expect(duped_issue).to receive(:state)
+      issue = double(dup: duped_issue)
+
+      form = Trellohub::Form.new
+      expect(form).to receive(:build_issue_attributes_by_issue)
+      expect(form).to receive(:build_card_attributes_by_issue)
+
+      form.import_issue('aaa/bbb', issue)
+    end
+  end
+
+  describe '.issue_repository_name' do
+    it 'returns repository name' do
+      form = Trellohub::Form.new
+      form.instance_variable_set(:@issue_repository, 'aaa/bbb')
+      expect(form.issue_repository_name).to eq 'bbb'
+    end
+  end
 end
